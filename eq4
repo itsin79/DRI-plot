@@ -1,0 +1,42 @@
+import math
+
+# تعریف مقادیر اولیه
+a1 = 1.0  # مقدار اولیه a1
+a2 = 2.0  # مقدار اولیه a2
+a3 = 3.0  # مقدار اولیه a3
+a4 = 4.0  # مقدار اولیه a4
+b1 = 1.5  # مقدار اولیه b1
+b2 = 2.5  # مقدار اولیه b2
+b3 = 3.5  # مقدار اولیه b3
+b4 = 4.5  # مقدار اولیه b4
+M = 0.5   # مقدار اولیه M
+F = 0.6   # مقدار اولیه F
+C0 = 1.2  # مقدار اولیه C0
+n = 0.8   # مقدار اولیه n
+TRZ = 300  # دمای مربوط به TRZ
+
+# محاسبه شرط اول
+X = (1 - F) * (b3 + b4) * n
+print("X:", X)
+
+# محاسبه شرط دوم
+term1 = (b1 + b2) * n - F * b1 * n - F * C0 * n
+term2 = ((a1 - a2) * math.exp(-1.66 + 1890 / TRZ))
+n_min = M * 0.99 / term2
+print("n_min:", n_min)
+
+# محاسبه شرط سوم
+term3 = math.log(a1 * a4 / (a2 * a3))
+term4 = math.log(b1 * b4 / (b2 * b3))
+log_B = -1.66 + 1890 / TRZ
+condition = term3 - term4 <= log_B
+print("Condition:", condition)
+
+# محاسبه شرط چهارم
+term5 = F * (b4 * n + C0 * n)
+X_max = min(X, term5)
+print("X_max:", X_max)
+
+# بررسی شرط نهایی
+n_condition = n >= n_min
+print("Final Condition:", n_condition)
