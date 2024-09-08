@@ -1,0 +1,43 @@
+import math
+
+# تابع برای محاسبه ρ1
+def calculate_rho1(O_Fe_in, delta_fb, T):
+    return ((O_Fe_in - 1 / 0.95) * delta_fb) / 56
+
+# تابع برای محاسبه ρ2
+def calculate_rho2(delta_fb):
+    return (delta_fb / 56) / 0.95
+
+# تابع برای محاسبه dFi/dt
+def calculate_dFi_dt(k1, Fi, rho1, d):
+    return 6 * k1 * (1 - Fi)**(2/3) / (rho1 * d)
+
+# تابع برای محاسبه ki
+def calculate_ki(Ai, Ei, R, T, rho_g, g1, g2, KH, g3, g4, K):
+    return Ai * math.exp(-Ei / (R * T)) * rho_g * (g1 + g3 - g2 / KH - g4 / K)
+
+# ثابت‌ها و پارامترها (می‌توانید مقادیر را تغییر دهید)
+O_Fe_in = 0.5  # مثال برای ورودی
+delta_fb = 10.0
+T = 298.15  # دما به کلوین
+k1 = 0.01
+Fi = 0.1
+rho1 = calculate_rho1(O_Fe_in, delta_fb, T)
+d = 0.1
+Ai = 1.0
+Ei = 50000
+R = 8.314
+rho_g = 1.0
+g1 = 1.0
+g2 = 1.0
+KH = 1.0
+g3 = 1.0
+g4 = 1.0
+K = 1.0
+
+# محاسبات
+dFi_dt = calculate_dFi_dt(k1, Fi, rho1, d)
+ki = calculate_ki(Ai, Ei, R, T, rho_g, g1, g2, KH, g3, g4, K)
+
+print(f"dFi/dt: {dFi_dt}")
+print(f"ki: {ki}")
