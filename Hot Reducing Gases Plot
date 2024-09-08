@@ -1,0 +1,21 @@
+import matplotlib.pyplot as plt
+
+# داده‌های محور X (مقدار گازهای کاهنده داغ)
+x_values = [4.5, 4.8, 5.0, 5.2, 5.5, 5.8, 6.0, 6.2, 6.5]
+
+# داده‌های محور Y (دمای گازهای دودکش)
+y_values = [500, 510, 520, 540, 560, 580, 600, 620, 660]
+
+# رسم نمودار
+plt.scatter(x_values, y_values, color='blue', label='Data points')
+
+# تنظیم عنوان نمودار و برچسب محورها
+plt.title('Effect of amount of hot reducing gases on a overall consumption rate of natural gas and b temperature of flue gases')
+plt.xlabel('Amount of Hot Reducing Gases')
+plt.ylabel('Temperature of Flue Gases')
+
+# نمایش legend
+plt.legend()
+
+# نمایش نمودار
+plt.show()
