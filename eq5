@@ -1,0 +1,45 @@
+import math
+from scipy.integrate import quad
+
+# تعریف مقادیر اولیه
+O_Fe_in = 0.7  # مقدار اولیه نسبت اکسیژن به آهن در ورودی
+M = 0.95       # مقدار اولیه M
+n = 0.8        # مقدار اولیه n
+a2 = 1.5       # مقدار اولیه a2
+b2 = 1.2       # مقدار اولیه b2
+a3 = 2.5       # مقدار اولیه a3
+b3 = 2.2       # مقدار اولیه b3
+a4 = 3.0       # مقدار اولیه a4
+b4 = 2.8       # مقدار اولیه b4
+delta_HFe2O3 = -822.16  # تغییرات انرژی تشکیل Fe2O3
+delta_HFe0_925 = -650.0 # تغییرات انرژی تشکیل Fe0.925
+delta_H2O = -241.83     # تغییرات انرژی تشکیل H2O
+delta_HCO = -110.53     # تغییرات انرژی تشکیل CO
+delta_HCO2 = -393.52    # تغییرات انرژی تشکیل CO2
+Pfp = 1.0               # مقدار Pfp
+Tg = 1200               # دمای گاز
+To = 300                # دمای مرجع
+D = 0.1                 # قطر لوله یا مسیر
+xl = 1.0                # طول مسیر
+sigma = 0.5             # ضریب ثابت
+kr = 1.0                # ضریب انتقال حرارت
+
+# محاسبه تغییرات انرژی حرارتی
+delta_HR = (O_Fe_in/3) * delta_HFe2O3 - ((1 - M)/0.95) * delta_HFe0_925
+delta_HR += n * (a2 - b2) * delta_H2O + n * (a3 + b3) * delta_HCO + n * (a4 - b4) * delta_HCO2
+print("ΔHR:", delta_HR)
+
+# محاسبه تغییرات حرارتی ناشی از جریان
+def integrand(T):
+    return (T - To)
+
+integral_result, _ = quad(integrand, To, Tg)
+
+NFe = 1000 * Pfp / 56
+HL = (24 / NFe) * integral_result * D * xl
+print("HL:", HL)
+
+# محاسبه ضریب انتقال حرارت
+xL_inv = 1 / xl + sigma / kr
+HL_calculated = 24 * xl * math.pi * D * (Tg - To) / NFe
+print("HL_calculated:", HL_calculated)
