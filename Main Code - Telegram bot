@@ -1,0 +1,120 @@
+import matplotlib.pyplot as plt
+import numpy as np
+from telegram import Update
+from telegram.ext import Updater, CommandHandler, CallbackContext
+
+# Replace 'YOUR_API_TOKEN' with your actual Telegram Bot API Token
+TOKEN = "YOUR_API_TOKEN"
+
+# Function to handle the /start command
+def start(update: Update, context: CallbackContext) -> None:
+    """
+    Sends a welcome message when the /start command is issued.
+    """
+    update.message.reply_text(
+        "Welcome to the Chart Bot! Use /plot to generate a sample chart, or "
+        "use other commands for specific plots."
+    )
+
+# Function to handle the /plot command
+def plot(update: Update, context: CallbackContext) -> None:
+    """
+    Generates and sends a basic sine wave plot in response to the /plot command.
+    """
+    # Create data for the plot
+    x = np.linspace(0, 10, 100)
+    y = np.sin(x)
+
+    # Create a figure and axis
+    plt.figure()
+    
+    # Plot the data
+    plt.plot(x, y, label='Sine wave')
+
+    # Add title and labels to the plot
+    plt.title("Sine Wave")
+    plt.xlabel("X-axis")
+    plt.ylabel("Y-axis")
+
+    # Add a legend
+    plt.legend()
+
+    # Save the plot as an image file
+    plt.savefig("plot.png")
+
+    # Close the plot to free memory
+    plt.close()
+
+    # Send the plot image to the user
+    update.message.reply_photo(photo=open('plot.png', 'rb'))
+
+# Function to handle a command that accepts parameters, e.g., /customplot x_min x_max
+def custom_plot(update: Update, context: CallbackContext) -> None:
+    """
+    Generates a customized plot based on user-provided parameters.
+    """
+    try:
+        # Parse user inputs for the plot range
+        x_min = float(context.args[0])
+        x_max = float(context.args[1])
+    except (IndexError, ValueError):
+        update.message.reply_text("Please provide valid x_min and x_max values.")
+        return
+
+    # Generate x values and compute corresponding y values
+    x = np.linspace(x_min, x_max, 100)
+    y = np.sin(x)  # This can be modified to use other functions or data
+
+    # Create the plot
+    plt.figure()
+    plt.plot(x, y, label='Custom Sine Wave')
+
+    # Customize the plot
+    plt.title("Custom Sine Wave Plot")
+    plt.xlabel("X-axis")
+    plt.ylabel("Y-axis")
+    plt.legend()
+
+    # Save and send the plot
+    plt.savefig("custom_plot.png")
+    plt.close()
+    update.message.reply_photo(photo=open('custom_plot.png', 'rb'))
+
+# Function to display help or command list
+def help_command(update: Update, context: CallbackContext) -> None:
+    """
+    Sends a help message listing all available commands.
+    """
+    update.message.reply_text(
+        "/start - Welcome message\n"
+        "/plot - Generate a basic sine wave plot\n"
+        "/customplot x_min x_max - Generate a custom sine wave plot within the specified range\n"
+        "/help - Show this help message"
+    )
+
+# Main function to set up and start the bot
+def main():
+    """
+    Starts the Telegram bot and sets up the command handlers.
+    """
+    # Create an Updater object using the bot token
+    updater = Updater(TOKEN, use_context=True)
+
+    # Get the dispatcher to register handlers
+    dp = updater.dispatcher
+
+    # Register command handlers
+    dp.add_handler(CommandHandler("start", start))
+    dp.add_handler(CommandHandler("plot", plot))
+    dp.add_handler(CommandHandler("customplot", custom_plot))
+    dp.add_handler(CommandHandler("help", help_command))
+
+    # Start the bot by polling Telegram's servers for new messages
+    updater.start_polling()
+
+    # Run the bot until Ctrl+C is pressed
+    updater.idle()
+
+# Entry point of the script
+if __name__ == '__main__':
+    main()
