@@ -1,0 +1,35 @@
+import math
+
+# ثابت‌ها
+π = math.pi
+
+# تابع برای محاسبه تغییرات نرخ انتقال حرارت از جریان گاز
+def dQgs_dZ(d, NFe, Tg, Ts):
+    return 24 * (π * d**2 / NFe) * (Tg - Ts)
+
+# تابع برای محاسبه تغییرات تعداد انتقال‌دهنده‌های حرارت
+def dN_dZ(epsilon, D, d):
+    return 6 * (1 - epsilon) * D**2 / d**3
+
+# تابع برای محاسبه تغییرات نرخ انتقال حرارت از جریان مایع
+def dQl_dZ(D, xL, Tg, To, NFe):
+    return (24 * π * D * xL * (Tg - To)) / NFe
+
+# تابع برای محاسبه انرژی حرارتی کل برای گاز
+def Hg(n, gi_cp_i, dT):
+    return n * sum(gi_cp_i * dT)
+
+# تابع برای محاسبه انرژی حرارتی کل برای سطح
+def Hs(F1, F2, cp_Fe2O3, cp_Fe, fb, O_Fe_in):
+    return ((1 - F1) / 2) * cp_Fe2O3 + \
+           ((F1 - F2) / 0.925) * cp_Fe2O3 + \
+           F2 * cp_Fe - \
+           (1 / fb - 1 - 1 / 3.5 * (O_Fe_in)) * 56 * cp_Fe2O3
+
+# تابع برای محاسبه تغییرات دما برای گاز
+def dTg_dZ(Hg, dQgs_dZ, dQl_dZ):
+    return 1 / Hg * (dQgs_dZ + dQl_dZ)
+
+# تابع برای محاسبه تغییرات دما برای سطح
+def dTs_dZ(Hs, dQgs_dZ, sd_dHR_dZ):
+    return 1 / Hs * (dQgs_dZ - sd_dHR_dZ)
